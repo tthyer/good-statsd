@@ -86,6 +86,7 @@ it('throws an error if missing endpoint', function (done) {
 it('does not report if the event que is empty', function (done) {
 
 	var reporter = new GoodUdp('udp://localhost:33333', {
+		udpType: 'udp4',
 		threshold: 5,
 		events: {
 			log: '*'
@@ -129,6 +130,7 @@ describe('_report()', function () {
 		server.start(function () {
 
 			var reporter = new GoodUdp(server.info.uri, {
+				udpType: 'udp4',
 				threshold: 5,
 				events: {
 					log: '*'
@@ -174,6 +176,7 @@ describe('_report()', function () {
 		server.start(function () {
 
 			var reporter = new GoodUdp(server.info.uri, {
+				udpType: 'udp4',
 				threshold: 0,
 				events: {
 					log: '*'
@@ -229,6 +232,7 @@ describe('_report()', function () {
 		server.start(function () {
 
 			var reporter = new GoodUdp(server.info.uri, {
+				udpType: 'udp4',
 				threshold: 5,
 				events: {
 					log: '*',
@@ -280,6 +284,7 @@ describe('_report()', function () {
 		server.start(function () {
 
 			var reporter = new GoodUdp(server.info.uri, {
+				udpType: 'udp4',
 				threshold: 5,
 				events: {
 					log: '*'
@@ -330,6 +335,7 @@ describe('stop()', function () {
 		server.start(function () {
 
 			var reporter = new GoodUdp(server.info.uri, {
+				udpType: 'udp4',
 				threshold: 3,
 				events: {
 					log: '*'

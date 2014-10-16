@@ -1,7 +1,7 @@
 {
   "name": "good-udp",
   "version": "1.0.0",
-  "repository": "git://github.com/ulrikaugustsson/good-udp",
+  "repository": "git://github.com/hapijs/good-udp",
   "description": "UDP broadcasting for Good process monitor",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,7 @@
   "licenses": [
     {
       "type": "BSD",
-      "url": "http://github.com/ulrikaugustsson/good-udp/raw/master/LICENSE"
+      "url": "http://github.com/hapijs/good-udp/raw/master/LICENSE"
     }
   ]
 }
