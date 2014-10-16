@@ -1,0 +1,27 @@
+{
+  "name": "good-udp",
+  "version": "1.0.0",
+  "repository": "git://github.com/hapijs/good-udp",
+  "description": "UDP broadcasting for Good process monitor",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test-cov"
+  },
+  "dependencies": {
+    "good-reporter": "2.x.x",
+    "hoek": "2.x.x",
+    "json-stringify-safe": "5.x.x"
+  },
+  "devDependencies": {
+    "lab": "4.x.x"
+  },
+  "engines": {
+    "node": ">=0.10.x"
+  },
+  "licenses": [
+    {
+      "type": "BSD",
+      "url": "http://github.com/hapijs/good-udp/raw/master/LICENSE"
+    }
+  ]
+}
