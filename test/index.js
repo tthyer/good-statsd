@@ -2,6 +2,7 @@
 
 var Dgram = require('dgram');
 var EventEmitter = require('events').EventEmitter;
+var Code = require('code');
 var GoodUdp = require('..');
 var Lab = require('lab');
 var lab = exports.lab = Lab.script();
@@ -60,7 +61,7 @@ internals.makeServer = function (handler) {
 
 var describe = lab.describe;
 var it = lab.it;
-var expect = Lab.expect;
+var expect = Code.expect;
 
 
 it('throws an error without using new', function (done) {
