@@ -4,7 +4,7 @@ Udp broadcasting for Good process monitor
 
 [![Build Status](https://travis-ci.org/hapijs/good-udp.svg?branch=master)](https://travis-ci.org/hapijs/good-udp) ![Current Version](https://img.shields.io/npm/v/good-udp.svg)
 
-Lead Maintainer: [Adam Bretz](https://github.com/arb)
+Lead Maintainer: [Ulrik Augustsson](https://github.com/ulrikaugustsson)
 
 ## Usage
 
