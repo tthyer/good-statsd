@@ -84,6 +84,16 @@ it('throws an error if missing endpoint', function (done) {
 	done();
 });
 
+it('can be invoked without optional options object', function (done) {
+
+	expect(function () {
+
+		var reporter = new GoodUdp('www.github.com', { log: '*' });
+	}).not.to.throw();
+
+	done();
+});
+
 it('does not report if the event que is empty', function (done) {
 
 	var reporter = new GoodUdp('udp://localhost:33333', { log: '*' }, { udpType: 'udp4', threshold: 5 });
