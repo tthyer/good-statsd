@@ -1,6 +1,6 @@
 {
   "name": "good-udp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": "git://github.com/hapijs/good-udp",
   "description": "UDP broadcasting for Good process monitor",
   "main": "index.js",
