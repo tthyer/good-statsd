@@ -68,7 +68,7 @@ it('throws an error without using new', function (done) {
 
 	expect(function () {
 
-		var reporter = GoodUdp('www.github.com', { log: '*' });
+		var reporter = GoodUdp({ log: '*' }, 'www.github.com');
 	}).to.throw('GoodUdp must be created with new');
 
 	done();
@@ -78,7 +78,7 @@ it('throws an error if missing endpoint', function (done) {
 
 	expect(function () {
 
-		var reporter = new GoodUdp(null, { log: '*' });
+		var reporter = new GoodUdp({ log: '*' }, null);
 	}).to.throw('endpoint must be a string');
 
 	done();
@@ -88,7 +88,7 @@ it('can be invoked without optional options object', function (done) {
 
 	expect(function () {
 
-		var reporter = new GoodUdp('www.github.com', { log: '*' });
+		var reporter = new GoodUdp({ log: '*' }, 'www.github.com');
 	}).not.to.throw();
 
 	done();
@@ -96,7 +96,7 @@ it('can be invoked without optional options object', function (done) {
 
 it('does not report if the event que is empty', function (done) {
 
-	var reporter = new GoodUdp('udp://localhost:33333', { log: '*' }, { udpType: 'udp4', threshold: 5 });
+	var reporter = new GoodUdp({ log: '*' }, 'udp://localhost:33333', { udpType: 'udp4', threshold: 5 });
 
 	var result = reporter._sendMessages();
 	expect(result).to.not.exist;
@@ -134,7 +134,7 @@ describe('_report()', function () {
 
 		server.start(function () {
 
-			var reporter = new GoodUdp(server.info.uri, { log: '*' }, { udpType: 'udp4', threshold: 5 });
+			var reporter = new GoodUdp({ log: '*' }, server.info.uri, { udpType: 'udp4', threshold: 5 });
 
 			reporter.start(ee, function (err) {
 
@@ -174,7 +174,7 @@ describe('_report()', function () {
 
 		server.start(function () {
 
-			var reporter = new GoodUdp(server.info.uri, { log: '*' }, { udpType: 'udp4', threshold: 0 });
+			var reporter = new GoodUdp({ log: '*' }, server.info.uri, { udpType: 'udp4', threshold: 0 });
 
 			reporter.start(ee, function (err) {
 
@@ -224,7 +224,7 @@ describe('_report()', function () {
 
 		server.start(function () {
 
-			var reporter = new GoodUdp(server.info.uri, { log: '*', request: '*' }, { udpType: 'udp4', threshold: 5 });
+			var reporter = new GoodUdp({ log: '*', request: '*' }, server.info.uri, { udpType: 'udp4', threshold: 5 });
 
 			reporter.start(ee, function (err) {
 
@@ -269,7 +269,7 @@ describe('_report()', function () {
 
 		server.start(function () {
 
-			var reporter = new GoodUdp(server.info.uri, { log: '*' }, { udpType: 'udp4', threshold: 5	});
+			var reporter = new GoodUdp({ log: '*' }, server.info.uri, { udpType: 'udp4', threshold: 5	});
 
 			reporter.start(ee, function (err) {
 
@@ -314,7 +314,7 @@ describe('stop()', function () {
 
 		server.start(function () {
 
-			var reporter = new GoodUdp(server.info.uri, { log: '*' }, { udpType: 'udp4', threshold: 3	});
+			var reporter = new GoodUdp({ log: '*' }, server.info.uri, { udpType: 'udp4', threshold: 3	});
 
 			reporter.start(ee, function (err) {
 

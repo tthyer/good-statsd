@@ -14,13 +14,13 @@ Lead Maintainer: [Ulrik Augustsson](https://github.com/ulrikaugustsson)
 `good-udp` will never close the udp client.
 
 ## Good Udp
-### new GoodUdp (endpoint, events, [options])
+### new GoodUdp (events, endpoint, [options])
 
 creates a new GoodFile object with the following arguments
-- `endpoint` - full path to remote server to transmit logs.
 - `events` - an object of key value pairs.
 		- `key` - one of the supported [good events](https://github.com/hapijs/good) indicating the hapi event to subscribe to
 		- `value` - a single string or an array of strings to filter incoming events. "\*" indicates no filtering. `null` and `undefined` are assumed to be "\*"
+- `endpoint` - full path to remote server to transmit logs.
 - `[options]` - optional arguments object
 	- `threshold` - number of events to hold before transmission. Defaults to `20`. Set to `0` to have every event start transmission instantly. It is strongly suggested to have a set threshold to make data transmission more efficient.
 	- `udpType` - a string with the type of udp you want to use. Valid options are udp4 or udp6. Defaults to `'udp4'`.
