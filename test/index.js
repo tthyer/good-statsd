@@ -2,10 +2,12 @@
 
 var Dgram = require('dgram');
 var EventEmitter = require('events').EventEmitter;
+var Stream = require('stream');
 var Code = require('code');
 var GoodUdp = require('..');
 var Lab = require('lab');
 var lab = exports.lab = Lab.script();
+var Hoek = require('hoek');
 
 // Declare internals
 
@@ -17,15 +19,28 @@ internals.isSorted = function (elements) {
 	var i = 0;
 	var li = elements.length;
 
-	while (i < li && elements[i+1]) {
+	while (i < li && elements[i + 1]) {
 
-		if (elements[i].timestamp > elements[i+1].timestamp) {
+		if (elements[i].timestamp > elements[i + 1].timestamp) {
 			return false;
 		}
 		++i;
 	}
 
 	return true;
+};
+
+
+internals.readStream = function (done) {
+
+	var result = new Stream.Readable({ objectMode: true });
+	result._read = Hoek.ignore;
+
+	if (typeof done === 'function') {
+		result.once('end', done);
+	}
+
+	return result;
 };
 
 
@@ -64,13 +79,17 @@ var it = lab.it;
 var expect = Code.expect;
 
 
-it('throws an error without using new', function (done) {
+it('allows creating without using new', function (done) {
 
-	expect(function () {
+	var reporter = GoodUdp({ log: '*' }, '');
+	expect(reporter).to.exist();
+	done();
+});
 
-		var reporter = GoodUdp({ log: '*' }, 'www.github.com');
-	}).to.throw('GoodUdp must be created with new');
+it('allows creating using new', function (done) {
 
+	var reporter = new GoodUdp({ log: '*' }, '');
+	expect(reporter).to.exist();
 	done();
 });
 
@@ -84,13 +103,12 @@ it('throws an error if missing endpoint', function (done) {
 	done();
 });
 
-it('can be invoked without optional options object', function (done) {
+it('does not throw an error with missing options', function (done) {
 
 	expect(function () {
 
-		var reporter = new GoodUdp({ log: '*' }, 'www.github.com');
+		var reporter = new GoodUdp({ log: '*' }, '');
 	}).not.to.throw();
-
 	done();
 });
 
@@ -99,7 +117,7 @@ it('does not report if the event que is empty', function (done) {
 	var reporter = new GoodUdp({ log: '*' }, 'udp://localhost:33333', { udpType: 'udp4', threshold: 5 });
 
 	var result = reporter._sendMessages();
-	expect(result).to.not.exist;
+	expect(result).to.not.exist();
 	done();
 });
 
@@ -107,6 +125,7 @@ describe('_report()', function () {
 
 	it('honors the threshold setting and sends the event in a batch', function (done) {
 
+		var stream = internals.readStream();
 		var hitCount = 0;
 		var ee = new EventEmitter();
 		var server = internals.makeServer(function (message, remote) {
@@ -134,14 +153,17 @@ describe('_report()', function () {
 
 		server.start(function () {
 
-			var reporter = new GoodUdp({ log: '*' }, server.info.uri, { udpType: 'udp4', threshold: 5 });
+			var reporter = new GoodUdp({ log: '*' }, server.info.uri, {
+				udpType: 'udp4',
+				threshold: 5
+			});
 
-			reporter.start(ee, function (err) {
+			reporter.init(stream, ee, function (err) {
 
-				expect(err).to.not.exist;
+				expect(err).to.not.exist();
 
 				for (var i = 0; i < 10; ++i) {
-					ee.emit('report', 'log', {
+					stream.push({
 						id: i,
 						value: 'this is data for item ' + i,
 						event: 'log'
@@ -153,6 +175,7 @@ describe('_report()', function () {
 
 	it('sends each event individually if threshold is 0', function (done) {
 
+		var stream = internals.readStream();
 		var hitCount = 0;
 		var ee = new EventEmitter();
 		var server = internals.makeServer(function (message, remote) {
@@ -176,12 +199,12 @@ describe('_report()', function () {
 
 			var reporter = new GoodUdp({ log: '*' }, server.info.uri, { udpType: 'udp4', threshold: 0 });
 
-			reporter.start(ee, function (err) {
+			reporter.init(stream, ee, function (err) {
 
 				expect(err).to.not.exist;
 
 				for (var i = 0; i < 10; ++i) {
-					ee.emit('report', 'log', {
+					stream.push({
 						id: i,
 						value: 'this is data for item ' + i,
 						event: 'log'
@@ -193,6 +216,7 @@ describe('_report()', function () {
 
 	it('sends the events in an envelop grouped by type and ordered by timestamp', function(done) {
 
+		var stream = internals.readStream();
 		var hitCount = 0;
 		var ee = new EventEmitter();
 		var server = internals.makeServer(function (message, remote) {
@@ -226,17 +250,16 @@ describe('_report()', function () {
 
 			var reporter = new GoodUdp({ log: '*', request: '*' }, server.info.uri, { udpType: 'udp4', threshold: 5 });
 
-			reporter.start(ee, function (err) {
+			reporter.init(stream, ee, function (err) {
 
 				expect(err).to.not.exist;
 
 				for (var i = 0; i < 10; ++i) {
-
 					var eventType = i % 2 === 0 ? 'log' : 'request';
 
-					ee.emit('report', eventType, {
+					stream.push({
 						id: i,
-						value: 'this is data for item ' + 1,
+						value: 'this is data for item ' + i,
 						timestamp: Math.floor(Date.now() + (Math.random() * 10000000000)),
 						event: eventType
 					});
@@ -247,6 +270,7 @@ describe('_report()', function () {
 
 	it('handles circular object references correctly', function (done) {
 
+		var stream = internals.readStream();
 		var hitCount = 0;
 		var ee = new EventEmitter();
 		var server = internals.makeServer(function (message, remote) {
@@ -255,8 +279,8 @@ describe('_report()', function () {
 			var payload = JSON.parse(message.toString());
 			var events = payload.events;
 
-			expect(events).to.exist;
-			expect(events.log).to.exist;
+			expect(events).to.exist();
+			expect(events.log).to.exist();
 			expect(events.log.length).to.equal(5);
 			expect(events.log[0]._data).to.equal('[Circular ~.events.log.0]');
 
@@ -271,9 +295,9 @@ describe('_report()', function () {
 
 			var reporter = new GoodUdp({ log: '*' }, server.info.uri, { udpType: 'udp4', threshold: 5	});
 
-			reporter.start(ee, function (err) {
+			reporter.init(stream, ee, function (err) {
 
-				expect(err).to.not.exist;
+				expect(err).to.not.exist();
 
 				for (var i = 0; i < 5; ++i) {
 
@@ -285,7 +309,7 @@ describe('_report()', function () {
 
 					data._data = data;
 
-					ee.emit('report', 'log', data);
+					stream.push(data);
 				}
 			});
 		});
@@ -296,6 +320,7 @@ describe('stop()', function () {
 
 	it('makes a last attempt to send any remaining log entries', function (done) {
 
+		var stream = internals.readStream();
 		var hitCount = 0;
 		var ee = new EventEmitter();
 		var server = internals.makeServer(function (message, remote) {
@@ -304,7 +329,7 @@ describe('stop()', function () {
 			var payload = JSON.parse(message.toString());
 			var events = payload.events;
 
-			expect(events.log).to.exist;
+			expect(events.log).to.exist();
 			expect(events.log.length).to.equal(2);
 
 			server.stop(function () {
@@ -316,24 +341,22 @@ describe('stop()', function () {
 
 			var reporter = new GoodUdp({ log: '*' }, server.info.uri, { udpType: 'udp4', threshold: 3	});
 
-			reporter.start(ee, function (err) {
+			reporter.init(stream, ee, function (err) {
 
-				expect(err).to.not.exist;
+				expect(err).to.not.exist();
 
-				ee.emit('report', 'log', {
+				stream.push({
 					event: 'log',
 					timestamp: Date.now(),
 					id: 1
 				});
-				ee.emit('report', 'log', {
+				stream.push({
 					event: 'log',
 					timestamp: Date.now(),
 					id: 2
 				});
+				stream.push(null);
 			});
-
-			reporter.stop();
 		});
 	});
 });
-
