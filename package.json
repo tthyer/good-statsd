@@ -13,6 +13,9 @@
     "json-stringify-safe": "5.x.x",
     "lodash.groupby": "3.x.x"
   },
+  "peerDependencies": {
+    "good": ">= 6.x.x"
+  },
   "devDependencies": {
     "lab": "5.x.x",
     "code": "1.x.x"
