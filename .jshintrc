@@ -1,0 +1,17 @@
+{
+  "boss": true,
+  "curly": true,
+  "eqnull": true,
+  "expr": true,
+  "latedef": "nofunc",
+  "loopfunc": true,
+  "maxcomplexity": 13,
+  "newcap": true,
+  "noarg": true,
+  "node": true,
+  "noempty": true,
+  "strict": true,
+  "undef": true,
+  "unused": true,
+  "predef": ["angular"]
+}
