@@ -1,24 +1,27 @@
 {
-  "name": "good-udp",
-  "version": "3.0.0",
-  "repository": "git://github.com/hapijs/good-udp",
-  "description": "UDP broadcasting for Good process monitor",
+  "name": "good-statsd",
+  "version": "0.1.0",
+  "repository": "git://github.com/tthyer/good-statsd",
+  "description": "StatsD message format broadcasting via UDP for Good process monitor",
   "main": "index.js",
   "scripts": {
-    "test": "make test-cov"
+    "test": "set -e; for t in test/*.js; do node $t | tap-spec; done"
   },
   "dependencies": {
     "good-squeeze": "2.x.x",
     "hoek": "2.x.x",
+    "joi": "^6.6.1",
     "json-stringify-safe": "5.x.x",
-    "lodash.groupby": "3.x.x"
+    "lodash.forEach": "3.x.x",
+    "lodash.forOwn": "3.x.x",
+    "lodash.groupby": "3.x.x",
+    "node-statsd": "^0.1.1"
   },
   "peerDependencies": {
     "good": ">= 6.x.x"
   },
   "devDependencies": {
-    "lab": "5.x.x",
-    "code": "1.x.x"
+    "tape": "^4.2.0"
   },
   "engines": {
     "node": ">=0.10.x"
