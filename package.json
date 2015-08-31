@@ -12,9 +12,7 @@
     "hoek": "2.x.x",
     "joi": "^6.6.1",
     "json-stringify-safe": "5.x.x",
-    "lodash.forEach": "3.x.x",
-    "lodash.forOwn": "3.x.x",
-    "lodash.groupby": "3.x.x",
+    "lodash": "3.x.x",
     "node-statsd": "^0.1.1"
   },
   "peerDependencies": {
