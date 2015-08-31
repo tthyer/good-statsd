@@ -158,10 +158,11 @@ test('groups events and invokes event formatters for event types', function(t) {
 
 test('a formatter can send a message through this.client', function(t) {
   var stream = internals.readStream();
+  var emit = new EventEmitter();
   var messageHandler = function (message) {
     t.equal(message.toString(), 'log:42|g', 'expected message was received');
     server.stop(function () {
-      reporter.exit();
+      emit.emit('stop');
       t.end();
     });
   };
@@ -178,7 +179,7 @@ test('a formatter can send a message through this.client', function(t) {
         }
       }
     });
-    reporter.init(stream, new EventEmitter(), function (err) {
+    reporter.init(stream, emit, function (err) {
       t.error(err, 'Server started without error');
       stream.push({
         value: 42,
@@ -187,4 +188,65 @@ test('a formatter can send a message through this.client', function(t) {
     });
   };
   server.start(reportSetup);
+});
+
+test('remaining message are sent when the stream end event occurs', function(t) {
+  var stream = internals.readStream();
+  var emitter = new EventEmitter();
+
+  t.plan(2);
+  var config = {
+    endpoint: 'udp://localhost:8125',
+    threshold: 3,
+    formatters: {
+      log: function(event) {
+        t.ok(event, 'an event reached the formatter');
+      }
+    } 
+  };
+
+  var reporter = new GoodStatsd({ log: '*' }, config);
+  reporter.init(stream, emitter, function (err) {
+    if(err) {
+      t.fail('Reporter failed to initialize: ' + err);
+      t.end();
+    }
+
+    stream.push({ event: 'log', value: 'this is data'});
+    stream.push({ event: 'log', value: 'this is more data'});
+    stream.push(null);
+  });
+});
+
+test('remaining message are sent when the emitter stop event occurs', function(t) {
+  var stream = internals.readStream();
+  var emitter = new EventEmitter();
+
+  t.plan(2);
+  var config = {
+    endpoint: 'udp://localhost:8125',
+    threshold: 3,
+    formatters: {
+      log: function(event) {
+        t.ok(event, 'an event reached the formatter');
+      }
+    } 
+  };
+
+  var reporter = new GoodStatsd({ log: '*' }, config);
+  reporter.init(stream, emitter, function (err) {
+    if(err) {
+      t.fail('Reporter failed to initialize: ' + err);
+      t.end();
+    }
+
+    var count = 0;
+    stream.on('data', function() {
+      if(++count == 2) {
+        emitter.emit('stop');
+      }
+    });
+    stream.push({ event: 'log', value: 'this is data'});
+    stream.push({ event: 'log', value: 'this is more data'});
+  });
 });
