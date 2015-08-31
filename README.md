@@ -2,6 +2,8 @@
 
 A reporter that facilitates sending Good Process Monitor metrics to Statsd. This is derivative of [good-udp](https://github.com/hapijs/good-udp), from which it was originally forked.
 
+[![Build Status](https://travis-ci.org/tthyer/good-statsd.svg?branch=master)](https://travis-ci.org/tthyer/good-statsd)
+
 ## Usage
 
 `good-statsd` implements the reporter interface for [good process monitor](https://github.com/hapijs/good). It allows a formatter function to be defined for a log type that will have access to a [node-statsd client](https://github.com/sivy/node-statsd).
