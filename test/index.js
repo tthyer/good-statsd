@@ -49,6 +49,13 @@ test('a valid configuration contains an endpoint and at least one formatter', fu
   t.end();
 });
 
+
+test('allows creating without using new', function (t) {
+  var reporter = GoodStatsd({ log: '*' }, { endpoint: 'udp://localhost:8125', formatters: { ops: function() {} } });
+  t.ok(reporter, 'report was created');
+  t.end();
+});
+
 test('configuration fails validation when endpoint is missing', function(t) {
   var config = {
     formatters: { ops: function() {} }
