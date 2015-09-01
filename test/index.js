@@ -84,7 +84,6 @@ test('invokes formatter', function(t) {
 
   var config = {
     endpoint: 'udp://localhost:8125',
-    threshold: 0,
     formatters: { log: function(event) {
       t.equal(event.value, 'this is data', 'formatter invoked with expected event');
       t.end();
@@ -106,7 +105,7 @@ test('invokes formatter', function(t) {
 });
 
 test('remains silent when event queue empty', function(t) {
-  var config = { endpoint: 'udp://localhost:8125', threshold: 5, formatters: { log: function() {}} };
+  var config = { endpoint: 'udp://localhost:8125', formatters: { log: function() {}} };
   var reporter = new GoodStatsd({ log: '*' }, config);
   var result = reporter._sendMessages();
   t.notOk(result, 'result should be falsy');
@@ -118,7 +117,6 @@ test('groups events and invokes event formatters for event types', function(t) {
 
   var config = {
     endpoint: 'udp://localhost:8125',
-    threshold: 0,
     formatters: {
       request: function(event) {
         t.equal(event.data.responseTime, 123, 'request event sent to request formatter');
@@ -179,7 +177,6 @@ test('a formatter can send a message through this.client', function(t) {
   var reportSetup = function() {
     reporter = new GoodStatsd({ log: '*' }, {
       endpoint: 'udp://localhost:8125',
-      threshold: 0,
       formatters: {
         log: function(event) {
           this.client.gauge(event.event, event.value);
@@ -204,7 +201,7 @@ test('remaining message are sent when the stream end event occurs', function(t) 
   t.plan(2);
   var config = {
     endpoint: 'udp://localhost:8125',
-    threshold: 3,
+    interval: 10000,
     formatters: {
       log: function(event) {
         t.ok(event, 'an event reached the formatter');
@@ -232,7 +229,7 @@ test('remaining message are sent when the emitter stop event occurs', function(t
   t.plan(2);
   var config = {
     endpoint: 'udp://localhost:8125',
-    threshold: 3,
+    interval: 10000,
     formatters: {
       log: function(event) {
         t.ok(event, 'an event reached the formatter');
@@ -249,11 +246,11 @@ test('remaining message are sent when the emitter stop event occurs', function(t
 
     var count = 0;
     stream.on('data', function() {
-      if(++count == 2) {
+      if(++count === 2) {
         emitter.emit('stop');
       }
     });
     stream.push({ event: 'log', value: 'this is data'});
     stream.push({ event: 'log', value: 'this is more data'});
-  });
+  }.bind(reporter));
 });
