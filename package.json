@@ -5,7 +5,8 @@
   "description": "StatsD message format broadcasting via UDP for Good process monitor",
   "main": "index.js",
   "scripts": {
-    "test": "set -e; for t in test/*.js; do node $t | tap-spec; done"
+    "test": "./node_modules/tape/bin/tape 'test/*.js'",
+    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/tape/bin/tape './test/*.js'"
   },
   "dependencies": {
     "good-squeeze": "2.x.x",
@@ -19,6 +20,8 @@
     "good": ">= 6.x.x"
   },
   "devDependencies": {
+    "coveralls": "^2.11.4",
+    "istanbul": "^0.3.19",
     "tap-spec": "^4.1.0",
     "tape": "^4.2.0"
   },

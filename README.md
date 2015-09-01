@@ -3,6 +3,7 @@
 A reporter that facilitates sending Good Process Monitor metrics to Statsd. This is derivative of [good-udp](https://github.com/hapijs/good-udp), from which it was originally forked.
 
 [![Build Status](https://travis-ci.org/tthyer/good-statsd.svg?branch=master)](https://travis-ci.org/tthyer/good-statsd)
+[![Coverage Status](https://coveralls.io/repos/tthyer/good-statsd/badge.svg)](https://coveralls.io/r/tthyer/good-statsd)
 
 ## Usage
 
