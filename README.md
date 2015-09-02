@@ -16,15 +16,11 @@ A reporter that facilitates sending Good Process Monitor metrics to Statsd. This
 
 The constructor creates a new GoodStatsd object with the following arguments
 - `events` - A required object specifying which events the reporter will handle.
-    - `key` - One of the supported [good events](https://github.com/hapijs/good) indicating the hapi event to subscribe to
+    - `key` - One of the supported [good events](https://github.com/hapijs/good) indicating the hapi event to subscribe to. * NOTE: currently only the `ops` event is supported *
     - `value` - A single string or an array of strings to filter incoming events. "\*" indicates no filtering. `null` and `undefined` are assumed to be "\*"
 - `config` - A required configuration object.
   - `endpoint` - The full path to remote server to transmit logs. Required.
-  - `threshold` - The number of events to hold before transmission. Defaults to `20`. Set to `0` to have every event start transmission instantly. It is strongly suggested to have a set threshold to make data transmission more efficient. Optional.  *Note: the threshold concept will be changed to a timeInterval, which makes more sense for statsd's realtime metrics aggregation.*
-  - `formatters` - An object that has functions to handle each type of event.
-    - `key` - One of the good events specified in events above.
-    - `value` - A function that will receive that event type. It has access to the node-statsd client in its scope through `this.client`.
-
+  - `interval` - The period of time in milliseconds to hold events before transmission. Defaults to 0. Set to `0` to have every event start transmission instantly. In the case of an interval, data aggregation will be performed on metrics before submission. Optional.
 
   ## good-statsd Methods
   ### `goodstatsd.init(stream, emitter, callback)`
@@ -51,12 +47,7 @@ server.register([{
       reporter: GoodStatsd,
       events: { ops: '*' },
       config: {
-        endpoint: 'udp://localhost:8125',
-        formatters: {
-          ops: function(event) {
-            this.client.gauge('requests', event.load.requests);
-          }
-        }
+        endpoint: 'udp://localhost:8125'
       }
     }]
   }}],
